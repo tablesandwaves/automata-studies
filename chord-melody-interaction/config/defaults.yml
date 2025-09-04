@@ -1,0 +1,66 @@
+key:
+  tonic: 52
+  scale: MinPentatonic
+
+chord_types:
+- T
+- T
+- T
+- T
+- m
+- oct
+- oct
+- pow
+- pow
+- pow
+- sus2
+- sus4
+
+durations:
+- 125
+- 125
+- 125
+- 250
+- 250
+- 250
+- 500
+- 750
+- 750
+- 1000
+- 1000
+- 1500
+- 1500
+- 1500
+
+scale_degrees:
+- 1
+- 1
+- 1
+- 1
+- 5
+- 5
+- 5
+- 3
+- 3
+- 4
+- 4
+- 8
+- 8
+- 2
+- 6
+- 7
+- 10
+- -3
+- -1
+
+drum_pads:
+  kicks:
+  - 36
+  - 48
+  snares:
+  - 37
+  - 38
+  - 47
+  percs:
+  - 43
+  - 46

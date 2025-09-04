@@ -1,29 +1,26 @@
 import { MessageChannel } from "node:worker_threads";
 import { Output as MidiOutput } from "easymidi";
-import { Key, Scale } from "tblswvs";
+import { Configuration } from "./configuration.js";
 
 
-const KEY           = new Key(52, Scale.WholeTone);
-const CHORD_TYPES   = ["T", "T", "T", "T", "m", "oct", "oct", "pow", "pow", "pow", "sus2", "sus4"];
-const DURATIONS     = [125, 125, 125, 250, 250, 250, 500, 750, 750, 1000, 1000, 1500, 1500, 1500];
-const SCALE_DEGREES = [1, 1, 1, 1, 5, 5, 5, 3, 3, 4, 4, 8, 8, 2, 6, 7, 10, -3, -1];
-const DRUM_PADS     = { kicks:  [36, 48], snares: [37, 38, 47], percs:  [43, 46] };
+const configFilepath = process.argv[2];
+const CONFIGURATION  = new Configuration(configFilepath);
 
-const randomKick        = () => DRUM_PADS.kicks[Math.floor(Math.random() * DRUM_PADS.kicks.length)];
-const randomSnare       = () => DRUM_PADS.snares[Math.floor(Math.random() * DRUM_PADS.snares.length)];
-const randomPerc        = () => DRUM_PADS.percs[Math.floor(Math.random() * DRUM_PADS.percs.length)];
-const randomDuration    = () => DURATIONS[Math.floor(Math.random() * DURATIONS.length)];
-const randomScaleDegree = () => SCALE_DEGREES[Math.floor(Math.random() * SCALE_DEGREES.length)];
+const randomKick        = () => CONFIGURATION.drumPads.kicks[Math.floor(Math.random() * CONFIGURATION.drumPads.kicks.length)];
+const randomSnare       = () => CONFIGURATION.drumPads.snares[Math.floor(Math.random() * CONFIGURATION.drumPads.snares.length)];
+const randomPerc        = () => CONFIGURATION.drumPads.percs[Math.floor(Math.random() * CONFIGURATION.drumPads.percs.length)];
+const randomDuration    = () => CONFIGURATION.durations[Math.floor(Math.random() * CONFIGURATION.durations.length)];
+const randomScaleDegree = () => CONFIGURATION.scaleDegrees[Math.floor(Math.random() * CONFIGURATION.scaleDegrees.length)];
 
 const randomChord = (root) => {
-  return KEY.chord(
-    root === undefined ? KEY.degree(randomScaleDegree()).scaleDegree : root,
-    CHORD_TYPES[Math.floor(Math.random() * CHORD_TYPES.length)]
+  return CONFIGURATION.key.chord(
+    root === undefined ? CONFIGURATION.key.degree(randomScaleDegree()).scaleDegree : root,
+    CONFIGURATION.chordTypes[Math.floor(Math.random() * CONFIGURATION.chordTypes.length)]
   );
 }
 
 const midiToScaleDegree = (midiNoteNumber) => {
-  const scaleOffsetIndex = KEY.mode.scaleOffsets.indexOf(midiNoteNumber % 12 - KEY.midiTonic);
+  const scaleOffsetIndex = CONFIGURATION.key.mode.scaleOffsets.indexOf(midiNoteNumber % 12 - CONFIGURATION.key.midiTonic);
   return scaleOffsetIndex === -1 ? undefined : scaleOffsetIndex + 1;
 }
 
@@ -31,8 +28,8 @@ const logEvent = (count, chord, note, duration) => {
   console.log(
     ` ${count.toString().padStart(4)}.`,
     "chord:", (`${chord.root}${chord.quality} ` +
-              `(${chord.midi.map(n => KEY.midi2note(n)).join(", ")})`).padEnd(27),
-    "melody:", note === undefined ? "    " : KEY.midi2note(note).padEnd(4),
+              `(${chord.midi.map(n => CONFIGURATION.key.midi2note(n)).join(", ")})`).padEnd(27),
+    "melody:", note === undefined ? "    " : CONFIGURATION.key.midi2note(note).padEnd(4),
     "duration:", duration.toString().padStart(4)
   );
 }
@@ -134,8 +131,8 @@ channel.port2.on("message", function (data) {
 });
 
 
-console.log(`Scale:         ${KEY.name}`);
-console.log(`Chords:        ${ratios(CHORD_TYPES)}`);
-console.log(`Scale degrees: ${ratios(SCALE_DEGREES)}`);
-console.log(`Note lengths:  ${ratios(DURATIONS)}\n`);
+console.log(`Scale:         ${CONFIGURATION.key.name}`);
+console.log(`Chords:        ${ratios(CONFIGURATION.chordTypes)}`);
+console.log(`Scale degrees: ${ratios(CONFIGURATION.scaleDegrees)}`);
+console.log(`Note lengths:  ${ratios(CONFIGURATION.durations)}\n`);
 setTimeout(() => channel.port2.postMessage(1), 2000);

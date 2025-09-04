@@ -85,3 +85,21 @@ Note lengths:  125: 21.4% 250: 21.4% 500: 7.1% 750: 14.3% 1000: 14.3% 1500: 21.4
 ```
 
 When playing, it will log event data displaying the chord, melodic note and duration between each event. By default the script will stop after 100 iterations.
+
+## Customizing the Output
+
+The program uses a default configuration defined in the YAML file at `config/defaults.yml`. You can customize the values by saving this example file under a new name and then passing the new file's path as a command line argument.
+
+```bash
+$ cp config/defaults.yml config/alternative.yml
+$ node main.js config/alternative.yml
+```
+
+Note that all other `.yml` files in the config directory will be git-ignored.
+
+* Chord types must be [`tblswvs` chord types](https://github.com/tablesandwaves/tblswvs.js/blob/main/src/note_data.ts#L64).
+* Durations are millisecond values
+* Scale degrees determine chord roots. They are integers passed to the `tblswvs` library and are relative to the `tblswvs.Key` tonic. Negative numbers are allowed, but zero is not.
+* Drum pads are MIDI note numbers for each drum hit type.
+
+When multiple values are present, they are chosen at random. Repeating a value is used to weight that value as proportionally more likely to occur.
