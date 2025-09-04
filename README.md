@@ -2,6 +2,10 @@
 
 A collection of musical automatons.
 
+## About
+
+This repository is a collection of automaton studies. The focus of each sub-project within its own directory will explore one or more methods for developing musical automatons that can interact with each other. Each of these sub-projects will function like a simple sketch that can play two or more synthesizers, typically by communicating using MIDI and/or OSC messages to Ableton Live.
+
 ## Chord/Melody Interaction
 
 **Added:** September 4, 2025
