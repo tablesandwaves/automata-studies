@@ -5,6 +5,7 @@ import { Key, Scale } from "tblswvs";
 
 
 export class Configuration {
+  iterations;
   key;
   chordTypes;
   durations;
@@ -25,7 +26,7 @@ export class Configuration {
       config = this.#parseYamlFile(this.#defaultConfigurationFilepath());
     }
 
-    // this.#loadKey(config);
+    this.iterations   = config.iterations;
     this.key          = new Key(config.key.tonic, Scale[config.key.scale]);
     this.chordTypes   = config.chord_types;
     this.durations    = config.durations;

@@ -67,7 +67,7 @@ const accompaniment = {synth: midiPort, channel: 2};
 const beat          = {synth: midiPort, channel: 10};
 
 const channel  = new MessageChannel();
-const maxCount = 100;
+const maxCount = CONFIGURATION.iterations;
 let   count    = 0;
 
 

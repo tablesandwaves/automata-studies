@@ -1,3 +1,5 @@
+iterations: 100
+
 key:
   tonic: 52
   scale: MinPentatonic
