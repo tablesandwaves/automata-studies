@@ -14,7 +14,7 @@ $ npm install
 ```
 
 * `easymidi`: a simple JavaScript MIDI library
-* 'js-yaml': a YAML parsing library for reading the config files
+* `js-yaml`: a YAML parsing library for reading the config files
 * `tblswvs`: my own library for processing musical patterns
 
 See the NPM website for details and links to source code.
