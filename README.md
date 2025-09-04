@@ -1,2 +1,3 @@
-# automata-studies
+# Automata Studies
+
 A collection of musical automatons.
