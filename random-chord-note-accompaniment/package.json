@@ -1,0 +1,20 @@
+{
+  "name": "random-chord-note-accompaniment",
+  "version": "0.1.0",
+  "description": "Play scale chords and build melody from chord notes",
+  "keywords": [
+    "musical",
+    "automata"
+  ],
+  "license": "MIT",
+  "author": "Steve Meyer",
+  "type": "module",
+  "main": "main.js ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "easymidi": "^3.1.0",
+    "tblswvs": "^0.21.4"
+  }
+}
