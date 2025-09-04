@@ -1,4 +1,4 @@
-# Random Chords & Melody
+# Chord / Melody Interaction
 
 ## Requirements & Setup
 
