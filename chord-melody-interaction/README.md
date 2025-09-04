@@ -10,7 +10,7 @@
 You will need to install two packages and their dependencies:
 
 ```bash
-npm install
+$ npm install
 ```
 
 * `easymidi`: a simple JavaScript MIDI library
@@ -49,7 +49,7 @@ In Live, while it is running you can then select the MIDI port and channel numbe
 
 ## Running the Program
 
-From the `random-chord-note-accompaniment` directory run the following command in a terminal:
+From the `chord-melody-interaction` directory run the following command in a terminal:
 
 ```bash
 $ node main.js
@@ -84,4 +84,4 @@ Note lengths:  125: 21.4% 250: 21.4% 500: 7.1% 750: 14.3% 1000: 14.3% 1500: 21.4
    ...
 ```
 
-When playing, it will log event data displaying the chord, melodic note and duration between each event.
+When playing, it will log event data displaying the chord, melodic note and duration between each event. By default the script will stop after 100 iterations.
