@@ -6,7 +6,19 @@ A collection of musical automatons.
 
 This repository is a collection of automaton studies. The focus of each sub-project within its own directory will explore one or more methods for developing musical automatons that can interact with each other. Each of these sub-projects will function like a simple sketch that can play two or more synthesizers, typically by communicating using MIDI and/or OSC messages to Ableton Live.
 
-## Chord/Melody Interaction
+## Automata Experiments
+
+### Guessing Game
+
+**Added:** September 5, 2025
+
+This program listens to a 16th note clock from Ableton Live and responds by generating MIDI note data for two voices. The voices assume the roles of a leader and a follower, or accompaniment. The leader has a fixed rhythm but may vary its note pitches at different times.
+
+The leader begins playing and chooses a sequence note that it wants the follower to guess. Once per 4/4 bar, the follower guesses a note and sequence position for the current iteration. The follower plays its guessed sequence note and then asks the leader if the guess was correct. The leader will respond by indicating whether or not both the sequence step position and note pitch are correct. Once the follower has guess correctly, the leader is allowed to modify its own sequence pitches (random scale degrees) and the process starts over.
+
+There are a limited number of sequences steps that are available for guessing. The available steps are defined by a starting sequence rhythm for the leader voice. As the follower correctly guesses sequence notes, it fixes the correct guesses into its own sequence and they are removed from future iterations. Once all available steps for guessing have been identified, the process resets itself to the beginning by clearing the follower's sequence and starting over.
+
+### Chord/Melody Interaction
 
 **Added:** September 4, 2025
 

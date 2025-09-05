@@ -2,8 +2,8 @@ import { logEvent } from "./util.js";
 import { Voice } from "./voice.js";
 
 
-// const STARTING_STEPS = [ 1, 0, 0, 1,  0, 0, 1, 0,  0, 0, 1, 0,  1, 0, 0, 0 ];
 const STARTING_STEPS = [ 1, -1, 0, 0,  1, -1, 0, -1,  0, 0, 1, -1,  1, -1, 0, 0 ];
+
 
 export class LeadVoice extends Voice {
   observingVoices;

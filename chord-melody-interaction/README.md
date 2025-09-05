@@ -7,7 +7,7 @@
 
 ### Install Node Dependencies
 
-You will need to install two packages and their dependencies:
+You will need to install three packages and their dependencies:
 
 ```bash
 $ npm install
