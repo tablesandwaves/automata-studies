@@ -1,7 +1,7 @@
 {
   "name": "random-chord-note-accompaniment",
   "version": "0.1.0",
-  "description": "Play scale chords and build melody from chord notes",
+  "description": "Automata Study: random chords and melody interaction.",
   "keywords": [
     "musical",
     "automata"
