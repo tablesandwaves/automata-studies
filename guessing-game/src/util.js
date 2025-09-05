@@ -15,3 +15,17 @@ export const shuffle = (array) => {
     [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
   }
 }
+
+
+export const logEvent = (source, name, data, macroSeparator = false) => {
+  let message = `${source}: ${name}`;
+
+  if (data !== undefined)
+    if (data instanceof Array)
+      message += ` ${data.join(" ")}`;
+    else
+      message += " " + data;
+
+  if (macroSeparator) console.log("---------")
+  console.log(message);
+}

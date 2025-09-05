@@ -1,4 +1,4 @@
-import { shuffle } from "./util.js";
+import { logEvent, shuffle } from "./util.js";
 import { Voice } from "./voice.js";
 
 
@@ -19,7 +19,7 @@ export class AccompanimentVoice extends Voice {
     super(key, midiOut, channel);
     this.leadVoice = leadVoice;
 
-    this.resetAccompaniment();
+    this.#resetAccompaniment();
   }
 
 
@@ -28,20 +28,8 @@ export class AccompanimentVoice extends Voice {
    */
   notify(message) {
     if (message === "reset") {
-      this.resetAccompaniment();
+      this.#resetAccompaniment();
     }
-  }
-
-
-  /**
-   * Start over because the lead voice has told us to.
-   */
-  resetAccompaniment() {
-    this.indexMatches   = false;
-    this.midiNumMatches = false;
-
-    this.sequence = STARTING_SEQUENCE.slice();
-    this.#resetAvailableChoices();
   }
 
 
@@ -66,6 +54,7 @@ export class AccompanimentVoice extends Voice {
     if (this.indexMatches && this.midiNumMatches) {
       // Record the guess in the accompaniment's sequence
       this.sequence[step] = this.randomStepMidi;
+      logEvent("AccompanimentVoice", "correct guess made", this.sequence)
 
       // Reset state tracking so new values are picked
       this.indexMatches   = false;
@@ -74,8 +63,22 @@ export class AccompanimentVoice extends Voice {
     }
 
     if (step === this.sequence.length - 1) {
-      this.generateNewRandomStepData();
+      this.#generateNewRandomStepData();
     }
+  }
+
+
+  /**
+   * Start over because the lead voice has told us to.
+   */
+  #resetAccompaniment() {
+    this.indexMatches   = false;
+    this.midiNumMatches = false;
+
+    this.sequence = STARTING_SEQUENCE.slice();
+    logEvent("AccompanimentVoice", "resetting", this.sequence);
+    this.#resetAvailableChoices();
+    this.#generateNewRandomStepData();
   }
 
 
@@ -83,14 +86,18 @@ export class AccompanimentVoice extends Voice {
    * The correct accompaniment note the lead voice is looking for has not been found yet, so generate
    * new guesses.
    */
-  generateNewRandomStepData() {
+  #generateNewRandomStepData() {
     // The next random step will be one not played by the lead voice.
     if (!this.indexMatches) this.randomStepIndex = this.availableIndices.pop();
 
     // Guess the next random MIDI note the lead voice is looking for.
     if (!this.midiNumMatches) this.randomStepMidi = this.availableMidiNoteNumbers.pop();
 
-    // Damn it all to hell if the logic is not working.
+    logEvent(
+      "AccompanimentVoice", "next guess selected",
+      `Step: ${this.randomStepIndex}, MIDI Note: ${this.randomStepMidi}`
+    );
+
     if (this.randomStepIndex === undefined || this.randomStepMidi === undefined) {
       console.log(this);
       throw new Error("something was undefined")

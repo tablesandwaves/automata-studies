@@ -1,3 +1,4 @@
+import { logEvent } from "./util.js";
 import { Voice } from "./voice.js";
 
 
@@ -52,6 +53,7 @@ export class LeadVoice extends Voice {
       this.sequence.forEach((s, i) => {
         this.sequence[i] = s > 0 ? this.key.degree(Math.ceil(Math.random() * this.key.scaleNotes.length)).midi : s;
       });
+      logEvent("LeadVoice", "evolving sequence", this.sequence, true);
 
       // Then select a new random sequence step for accompanying voices to guess.
       this.generateDesiredAccompanimentData();
@@ -95,6 +97,11 @@ export class LeadVoice extends Voice {
 
     // Then pick a random scale note
     this.desiredAccompanimentMidiNumber = this.key.degree(Math.ceil(Math.random() * this.key.scaleNotes.length)).midi;
+
+    logEvent(
+      "LeadVoice", "next answer selected",
+      `Step: ${this.desiredAccompanimentIndex}, MIDI Note: ${this.desiredAccompanimentMidiNumber}`
+    );
   }
 
 
@@ -119,5 +126,7 @@ export class LeadVoice extends Voice {
     this.#generateAvailableIndices();
 
     this.observingVoices.forEach(voice => voice.notify("reset"));
+
+    logEvent("LeadVoice", "resetting sequence", this.sequence, true);
   }
 }
