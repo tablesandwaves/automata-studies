@@ -48,13 +48,18 @@ export class AccompanimentVoice extends Voice {
       // Store the result in the appropriate fields so we know whether or not to pick new values
       // for the next round.
       [this.indexMatches, this.midiNumMatches] = this.leadVoice.verifyHarmony(step, this.randomStepMidi);
+
+      logEvent(
+        "AccompanimentVoice", "verified guess",
+        `Step: ${this.indexMatches ? "" : "no "}match; MIDI Note: ${this.midiNumMatches ? "" : "no "}match`
+      );
     }
 
     // When both portions of the guess match...
     if (this.indexMatches && this.midiNumMatches) {
       // Record the guess in the accompaniment's sequence
       this.sequence[step] = this.randomStepMidi;
-      logEvent("AccompanimentVoice", "correct guess made", this.sequence)
+      logEvent("AccompanimentVoice", "correct guess made", this.sequence);
 
       // Reset state tracking so new values are picked
       this.indexMatches   = false;
