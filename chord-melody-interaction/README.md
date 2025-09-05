@@ -21,11 +21,9 @@ See the NPM website for details and links to source code.
 
 ### MIDI Setup
 
-When running, this program will create a MIDI port named `tblswvs.out` that should show up as a MIDI input source for your DAW. It requires three voices listening to MIDI channles 1, 2 and 10. The first two voices will receive chords and melodic accompaniment respectively. The third voice should be a drum kit that uses MIDI note numbers described below.
+See this repository's main [README](../README.md) for notes about how to configure the `tblswvs.out` MIDI port this JavaScript program uses.
 
-Note that the MIDI port name may not persist when the script is not running. In Ableton Live, for example, you can run the script (see below) and while it is running configure the MIDI port so that it receives note data by enabling the **Track** option in the input port of the MIDI configuration. You may want to adjust the MIDI Clock Sync Delay setting to keep the timing in sync with other tracks playing in Live.
-
-In Live, while it is running you can then select the MIDI port and channel numbers in the **MIDI From** menus. After the script is configured for the first time, the `tblswvs.out` MIDI port will be saved with a Live Set but will be grayed out while the node/JavaScript program is not running.
+This program requires three voices listening to MIDI channles 1, 2 and 10. The first two voices will receive chords and melodic accompaniment respectively. The third voice should be a drum kit that uses MIDI note numbers described below.
 
 ### MIDI Voices
 
