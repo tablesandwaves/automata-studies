@@ -1,5 +1,5 @@
 import { logEvent, shuffle } from "./util.js";
-import { Voice } from "./voice.js";
+import { Voice } from "../../common/voice.js";
 
 
 const STARTING_SEQUENCE = [ 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0 ];

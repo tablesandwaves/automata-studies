@@ -1,5 +1,5 @@
 import { logEvent } from "./util.js";
-import { Voice } from "./voice.js";
+import { Voice } from "../../common/voice.js";
 
 
 const STARTING_STEPS = [ 1, -1, 0, 0,  1, -1, 0, -1,  0, 0, 1, -1,  1, -1, 0, 0 ];
