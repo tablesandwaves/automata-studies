@@ -7,7 +7,9 @@ const study = process.argv[2];
 
 switch (study) {
   case "chord-melody-interaction":
-    const sequencer = new ChordMelodySequencer();
+    const configFilepath = process.argv[3];
+    const sequencer = new ChordMelodySequencer(configFilepath);
+    // Wait 2 seconds for the virtual MIDI port to be recognized.
     setTimeout(() => sequencer.run(), 2000);
     break;
   case "guessing-game":

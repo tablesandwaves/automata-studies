@@ -21,8 +21,8 @@ export class Configuration {
   #loadConfig(configFilepath) {
     let config;
 
-    if (configFilepath !== undefined && fs.existsSync(path.resolve(import.meta.dirname, configFilepath))) {
-      config = this.#parseYamlFile(path.resolve(import.meta.dirname, configFilepath));
+    if (configFilepath !== undefined && fs.existsSync(path.resolve(configFilepath))) {
+      config = this.#parseYamlFile(path.resolve(configFilepath));
     } else {
       config = this.#parseYamlFile(this.#defaultConfigurationFilepath());
     }
