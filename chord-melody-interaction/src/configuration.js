@@ -12,6 +12,7 @@ export class Configuration {
   scaleDegrees;
   drumPads;
 
+
   constructor(configFilepath) {
     this.#loadConfig(configFilepath);
   }
@@ -47,6 +48,6 @@ export class Configuration {
 
 
   #defaultConfigurationFilepath() {
-    return path.resolve(import.meta.dirname, "config", "defaults.yml");
+    return path.resolve(import.meta.dirname, "..", "config", "defaults.yml");
   }
 }

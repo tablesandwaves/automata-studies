@@ -25,6 +25,5 @@ export class GuessingGameSequencer {
 
     this.#leadVoice = new LeadVoice(key, midiOut, 1);
     this.#leadVoice.subscribe(new AccompanimentVoice(key, midiOut, 2, this.#leadVoice));
-
   }
 }
