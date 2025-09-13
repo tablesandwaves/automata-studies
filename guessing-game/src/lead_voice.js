@@ -14,7 +14,7 @@ export class LeadVoice extends Voice {
 
 
   constructor(key, midiOut, channel) {
-    super(key, midiOut, channel);
+    super(midiOut, channel, key);
 
     this.observingVoices = [];
     this.evolve = false;

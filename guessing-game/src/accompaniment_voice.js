@@ -16,7 +16,7 @@ export class AccompanimentVoice extends Voice {
 
 
   constructor(key, midiOut, channel, leadVoice) {
-    super(key, midiOut, channel);
+    super(midiOut, channel, key);
     this.leadVoice = leadVoice;
 
     this.#resetAccompaniment();

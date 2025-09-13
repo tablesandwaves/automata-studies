@@ -1,14 +1,17 @@
 export class Voice {
-  sequence;
-  key;
+  // Required properties
   #midiOut;
   #channel;
 
+  // Optional properties
+  sequence;
+  key;
 
-  constructor(key, midiOut, channel) {
-    this.key = key;
+
+  constructor(midiOut, channel, key = undefined) {
     this.#midiOut = midiOut;
     this.#channel = channel - 1; // Easy MIDI uses 1-indexing for MIDI channels
+    this.key = key;
   }
 
 

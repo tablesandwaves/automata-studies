@@ -1,6 +1,7 @@
 import { MessageChannel } from "node:worker_threads";
 import { Output as MidiOutput } from "easymidi";
-import { ratios, playNote } from "./src/util.js";
+import { Voice } from "../common/voice.js";
+import { ratios } from "./src/util.js";
 import { Configuration } from "./src/configuration.js";
 
 
@@ -18,9 +19,9 @@ export class ChordMelodySequencer {
     this.#configuration = new Configuration(configFilepath);
 
     const midiPort     = new MidiOutput("tblswvs.out", true);
-    this.chords        = {synth: midiPort, channel: 1};
-    this.accompaniment = {synth: midiPort, channel: 2};
-    this.beat          = {synth: midiPort, channel: 10};
+    this.chords        = new Voice(midiPort, 1);
+    this.accompaniment = new Voice(midiPort, 2);
+    this.beat          = new Voice(midiPort, 10);
 
     this.channel  = new MessageChannel();
     this.maxCount = this.#configuration.iterations;
@@ -117,8 +118,8 @@ export class ChordMelodySequencer {
       const duration = this.count < 5 || this.count > this.maxCount - 4 ? 1500 : this.randomDuration();
       const chord    = this.randomChord(chordRoot);
 
-      playNote(this.beat, this.randomKick(), 100);
-      chord.midi.forEach(note => playNote(this.chords, note + 0, duration));
+      this.beat.playNote(this.randomKick(), 100);
+      chord.midi.forEach(note => this.chords.playNote(note, duration));
 
       this.channel.port1.postMessage({chord: chord, duration: duration});
     });
@@ -130,22 +131,23 @@ export class ChordMelodySequencer {
     this.channel.port2.on("message", (data) => {
       // Decide whether or not to play a melodic note. If yes, choose one of the chord notes.
       const note = this.count >= 5 && Math.random() < 0.7 ?
-                  data.chord.midi[Math.floor(Math.random() * data.chord.midi.length)] :
-                  undefined;
+                   data.chord.midi[Math.floor(Math.random() * data.chord.midi.length)] :
+                   undefined;
 
-      if (data.duration >= 500)
-        setTimeout(() => playNote(
-          this.beat,
-          Math.random() > 0.5 ? this.randomPerc() : this.randomSnare(),
-          100
-        ), data.duration / 4);
+      if (data.duration >= 500) {
+        setTimeout(() => {
+          this.beat.playNote(Math.random() > 0.5 ? this.randomPerc() : this.randomSnare(), 100);
+        }, data.duration / 4);
+      }
+
 
       // If a note was chose for this cycle iteration, play it after half the duration amount.
       if (note !== undefined)
         setTimeout(() => {
           if (data.duration >= 250)
-            playNote(this.beat, Math.random() > 0.5 ? this.randomPerc() : this.randomSnare(), 100);
-          playNote(this.accompaniment, note + 0, data.duration);
+            this.beat.playNote(Math.random() > 0.5 ? this.randomPerc() : this.randomSnare(), 100);
+
+          this.accompaniment.playNote(note, data.duration);
         }, data.duration / 2);
 
       // After the current duration wraps up, tell Port 1 what note you chose (which may
