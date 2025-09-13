@@ -97,10 +97,16 @@ export class ChordMelodySequencer {
 
 
   #configureChannelPorts() {
-    /**
-     * Port 1 represents the chord progression. Choose a random duration and chord,
-     * then tell Port 2 what you played so it can accompany.
-     */
+    this.#setupChordsMessageReceiver();
+    this.#setupMelodyMessageReceiver();
+  }
+
+
+  /**
+   * Port 1 represents the chord progression. Choose a random duration and chord,
+   * then tell Port 2 what you played so it can accompany.
+   */
+  #setupChordsMessageReceiver() {
     this.#voiceMessageChannel.port1.on("message", (chordRoot) => {
       this.#iterationCount++;
 
@@ -121,11 +127,14 @@ export class ChordMelodySequencer {
 
       this.#voiceMessageChannel.port1.postMessage({chord: chord, duration: duration});
     });
+  }
 
-    /**
-     * Port 2 represents the accompanying melody. Based on the chord played, choose
-     * a random chord note to play in another voice.
-     */
+
+  /**
+   * Port 2 represents the accompanying melody. Based on the chord played, choose
+   * a random chord note to play in another voice.
+   */
+  #setupMelodyMessageReceiver() {
     this.#voiceMessageChannel.port2.on("message", (data) => {
       // Decide whether or not to play a melodic note. If yes, choose one of the chord notes.
       const note = this.#iterationCount >= 5 && Math.random() < 0.7 ?
