@@ -4,7 +4,37 @@ A collection of musical automatons.
 
 ## About
 
-This repository is a collection of automaton studies. The focus of each sub-project within its own directory will explore one or more methods for developing musical automatons that can interact with each other. Each of these sub-projects will function like a simple sketch that can play two or more synthesizers, typically by communicating using MIDI and/or OSC messages to Ableton Live.
+This repository is a collection of automaton studies. Each study is an independent sub-project within its own directory and will explore one or more methods for developing musical automatons that can interact with each other. Each of these sub-projects will function like a simple sketch that can play two or more synthesizers, typically by communicating using MIDI and/or OSC messages to Ableton Live.
+
+## Installation
+
+Clone this repository and install its package dependencies.
+
+```bash
+$ git clone git@github.com:tablesandwaves/automata-studies.git
+$ npm install
+```
+
+Package dependencies are kept to a minimum and the direct dependencies include:
+
+* `easymidi`: a simple JavaScript MIDI library
+* `js-yaml`: a YAML parsing library for reading the config files
+* `osc-receiver`: a simple Open Sound Control (OSC) message receiving library, used for receiving 16th note clock ticks
+* `tblswvs`: my own library for processing musical patterns
+
+See the NPM website for details and links to source code.
+
+Note that some of these studies will require using Ableton Live and the custom Max for Live device found in the `m4l` directory of this repo.
+
+## Running an Experiment
+
+See the `README` file for the experiment you wish to run for instructions on how to prepare any synthesizers, MIDI targets or Ableton Live.
+
+Run an individual experiment using the `main.js` script from the repository root and passing the experiment's directory/folder name as a command line argument. For example:
+
+```bash
+$ node main.js guessing-game
+```
 
 ## Automata Experiments
 
@@ -31,6 +61,14 @@ These interactive automatons are implemented using Node.js's `MessageChannel` sy
 ## Common Technical Notes
 
 Each sub-directory in this project is an independent study/experiment. The following describes some common/shared technical configurations used by multiple studies.
+
+### Max for Live Device Setup
+
+Inside the `m4l` directory of this repo is a simple Max for Live (M4L) device that listens to the Live transport and sends 16th note clock ticks as step integers 0-15 to some of these JavaScript programs. It sends the data as UDP messages using the Max `[udpsend]` object as Open Sound Control (OSC) style messages. It communicates over a localhost connection on port 33334.
+
+When an automata study requires this device, create a MIDI track in Live and simply add the M4L device to it. This device should not be added one of the synth voices because it does not pass through MIDI data.
+
+These 16th note clock ticks are the timing triggering event source for some of the JavaScript programs.
 
 ### JavaScript MIDI Setup
 

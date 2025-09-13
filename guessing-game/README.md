@@ -5,27 +5,9 @@
 * Node.js
 * Ableton Live with Max for Live
 
-### Install Node Dependencies
+### Max for Live Setup
 
-You will need to install three packages and their dependencies. From the `guessing-game` directory run:
-
-```bash
-$ npm install
-```
-
-* `easymidi`: a simple JavaScript MIDI library
-* `osc-receiver`: a simple Open Sound Control (OSC) message receiving library, used for receiving 16th note clock ticks
-* `tblswvs`: my own library for processing musical patterns
-
-See the NPM website for details and links to source code.
-
-### Install Max for Live Device
-
-Inside the `m4l` directory of this sub-project is a simple Max for Live (M4L) library that listens to the Live transport and sends 16th note clock ticks to the JavaScript program. It sends the data as UDP messages using the Max `[udpsend]` object. It communicates over a localhost connection on port 33334.
-
-Create a MIDI track in Live and simply add the M4L device to it. This device should not be added one of the synth voices because it does not pass through MIDI data.
-
-These 16th note clock ticks are the timing triggering event source for the JavaScript program.
+See this repository's main [README](../README.md) for notes about how to use the Max for Live device for following Live's transport.
 
 ### MIDI Setup
 
@@ -35,16 +17,16 @@ This program requires two voices listening to MIDI channles 1 and 2. Each voice 
 
 ## Running the Program
 
-From the `guessing-game` directory run the following command in a terminal:
+From the Automata Studies repo root directory run the following command in a terminal:
 
 ```bash
-$ node main.js
+$ node main.js guessing-game
 ```
 
 When the script runs, it will first print out details for the initial state for its lead and accompaniment voices. Example:
 
 ```
-$ node main.js
+$ node main.js guessing-game
 ---------
 LeadVoice: resetting sequence 60 -1 0 0 60 -1 0 -1 0 0 60 -1 60 -1 0 0
 LeadVoice: next answer selected Step: 6, MIDI Note: 67
