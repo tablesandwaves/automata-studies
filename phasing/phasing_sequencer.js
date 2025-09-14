@@ -5,7 +5,7 @@ import { Voice } from "../common/voice.js";
 import { PhaseVoice } from "./phase_voice.js";
 
 
-export class WobbleSequencer {
+export class PhasingSequencer {
   #transport;
   voice1;
   voice2;

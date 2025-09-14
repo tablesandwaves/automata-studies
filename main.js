@@ -1,6 +1,6 @@
 import { ChordMelodySequencer } from "./chord-melody-interaction/chord_melody_sequencer.js";
 import { GuessingGameSequencer } from "./guessing-game/guessing_game_sequencer.js";
-import { WobbleSequencer } from "./wobbly-time/wobble_sequencer.js";
+import { PhasingSequencer } from "./phasing/phasing_sequencer.js";
 
 
 const study = process.argv[2];
@@ -15,7 +15,7 @@ switch (study) {
   case "guessing-game":
     new GuessingGameSequencer();
     break;
-  case "wobbly-time":
-    new WobbleSequencer();
+  case "phasing":
+    new PhasingSequencer();
     break;
 }
