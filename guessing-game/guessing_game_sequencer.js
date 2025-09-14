@@ -15,7 +15,7 @@ export class GuessingGameSequencer {
 
     // Clock Step From Live
     this.#transport = new LiveStepFollower();
-    this.#transport.onStep((step) => this.#leadVoice.tick(step));
+    this.#transport.on("step", (step) => this.#leadVoice.tick(step));
   }
 
 

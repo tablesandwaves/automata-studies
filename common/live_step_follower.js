@@ -15,7 +15,7 @@ import OscReceiver from "osc-receiver";
  * that want to respond to Live's transport as sequencer steps.
  *
  * The class is a simple extension of the Node `EventEmitter` class. Event recievers/followers
- * simply need to register a call back with this class's `onStep()` method.
+ * simply need to register a callback function class's "step" event.
  */
 export class LiveStepFollower extends EventEmitter {
   #receiver;
@@ -28,13 +28,5 @@ export class LiveStepFollower extends EventEmitter {
     this.#receiver = new OscReceiver();
     this.#receiver.bind(33334, "localhost");
     this.#receiver.on("/live/transport", (step) => this.emit("step", step));
-  }
-
-
-  /**
-   * Register a call back for Live 16n transport steps.
-   */
-  onStep(callback) {
-    this.on("step", callback);
   }
 }
