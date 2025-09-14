@@ -38,6 +38,14 @@ $ node main.js guessing-game
 
 ## Automata Experiments
 
+### Phasing Voices
+
+**Added:** September 14, 2025
+
+Like the Guessing Game, this follow's Ableton Live's transport. It sends MIDI data to Live for two melodic voices and one drum voice. The melodic voices use Euclidean rhythms that will usually have different sequence lengths and Euclidean step divisors. The program will let the melodic lines phase against each other until they resync their first sequence steps. At that point the sequences will be re-randomized and the process starts over.
+
+The melodic voices also report back to a sequencer object that coordinates their activity. This sequencer will use info from the melodic voices to play the drum voice.
+
 ### Guessing Game
 
 **Added:** September 5, 2025
