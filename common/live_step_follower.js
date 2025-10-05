@@ -27,6 +27,7 @@ export class LiveStepFollower extends EventEmitter {
     // Clock Step From Live
     this.#receiver = new OscReceiver();
     this.#receiver.bind(33334, "localhost");
-    this.#receiver.on("/live/transport", (step) => this.emit("step", step));
+    this.#receiver.on("/live/step", index => this.emit("step", index));
+    this.#receiver.on("/live/transport", state => this.emit("transport", state));
   }
 }
