@@ -2,6 +2,7 @@ import { Output as MidiOutput } from "easymidi";
 import { Key, Scale } from "tblswvs";
 import { LiveStepFollower } from "../common/live_step_follower.js";
 import { PadVoice } from "./src/pad_voice.js";
+import { KeysVoice } from "./src/keys_voice.js";
 
 
 export class ImprovisingSequencer {
@@ -32,8 +33,15 @@ export class ImprovisingSequencer {
 
 
   step(index) {
+    // First notify the leaders so they can update their followers with data
     this.voices.forEach(voice => {
       if (voice.musicalRole === "Leader")
+        voice.step(index);
+    });
+
+    // Then update the followers so they can respond to the current step index
+    this.voices.forEach(voice => {
+      if (voice.musicalRole !== "Leader")
         voice.step(index);
     });
   }
@@ -43,6 +51,11 @@ export class ImprovisingSequencer {
     const key = new Key(60, Scale.Minor);
     const midiOut = new MidiOutput("tblswvs.out", true);
 
-    this.voices.push(new PadVoice("Leader", key, midiOut, 1));
+    const leader = new PadVoice("Leader", key, midiOut, 1);
+    const follower = new KeysVoice("MimickingListener", key, midiOut, 2);
+    leader.followers.push(follower);
+
+    this.voices.push(leader);
+    this.voices.push(follower);
   }
 }

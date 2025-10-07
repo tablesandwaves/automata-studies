@@ -2,19 +2,23 @@ import { ImprovisingVoice } from "./improvising_voice.js";
 
 
 // 2n, 2nd, 1n, 1nd, 0.5n
-const CHORD_STEP_LENGTHS = [8, 12, 16, 24, 32];
+const CHORD_STEP_LENGTHS = [
+  4, 4, 4, 4,
+  8, 8, 8, 8, 8,
+  12, 12, 12,
+  16, 16,
+  24,
+  32
+];
 
 
 export class PadVoice extends ImprovisingVoice {
   // Track chord lengths as sequencer step counts
-  #stepCount;
   #currentChordLength;
 
 
   constructor(musicalRole, key, midiOut, midiChannel) {
     super(musicalRole, key, midiOut, midiChannel);
-
-    this.#stepCount = -1;
   }
 
 
@@ -36,10 +40,9 @@ export class PadVoice extends ImprovisingVoice {
    * * Notify any registered followers
    */
   step(index) {
-    this.#stepCount++;
-    console.log(`PadVoice.step(${index}): ${this.#stepCount}`)
+    this.stepCount++;
 
-    if (this.#stepCount > 0 && this.#stepCount < this.#currentChordLength) return;
+    if (this.stepCount > 0 && this.stepCount < this.#currentChordLength) return;
 
     this.stopCurrentChord();
     this.generateNewChord();
@@ -48,23 +51,17 @@ export class PadVoice extends ImprovisingVoice {
 
 
   stop() {
-    console.log(`PadVoice.stop()`);
-
     this.stopCurrentChord();
-    this.#stepCount = -1;
+    this.stepCount = -1;
   }
 
 
   stopCurrentChord() {
-    console.log(`PadVoice.stopCurrentChord()`);
-
     this.stopActiveNotes();
   }
 
 
   generateNewChord() {
-    console.log(`PadVoice.generateNewChord()`);
-
     this.#currentChordLength = CHORD_STEP_LENGTHS[Math.floor(Math.random() * CHORD_STEP_LENGTHS.length)];
     const chordRoot = Math.ceil(Math.random() * this.key.scaleNotes.length);
     const currentChord = this.key.chord(chordRoot, "T");
@@ -74,11 +71,17 @@ export class PadVoice extends ImprovisingVoice {
 
     console.log("this.#currentChordLength", this.#currentChordLength, "chordRoot", chordRoot, "currentChord", currentChord);
 
-    this.#stepCount = 0;
+    this.stepCount = 0;
   }
 
 
   notifyFollowers() {
-    console.log(`PadVoice.notifyFollowers()`);
+    this.followers.forEach(voice => {
+      voice.notify({
+        type: "chord",
+        notes: this.activeNotes,
+        duration: this.#currentChordLength
+      });
+    });
   }
 }
