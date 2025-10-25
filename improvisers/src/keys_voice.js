@@ -38,19 +38,8 @@ export class KeysVoice extends ImprovisingVoice {
     }
     this.melodyIndex++;
 
-    this.midiOut.send("noteon", {
-      note: midiNoteNumber,
-      velocity: Math.floor(Math.random() * 30) + 70,
-      channel: this.midiChannel
-    });
-
-    setTimeout(() => {
-      this.midiOut.send("noteoff", {
-        note: midiNoteNumber,
-        velocity: 100,
-        channel: this.midiChannel
-      });
-    }, 100);
+    this.playNote(midiNoteNumber);
+    setTimeout(() => this.stopNote(midiNoteNumber), 100);
   }
 
 
