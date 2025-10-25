@@ -1,3 +1,4 @@
+import { shuffle } from "tblswvs";
 import { ImprovisingVoice } from "./improvising_voice.js";
 
 
@@ -13,6 +14,15 @@ const DURATION_MELODY_RHYTHM_MAP = {
 }
 
 
+// These numbers are tblswvs scale degrees.
+const MELODY_SET = [
+  [ 1,  8, 2,  7,   3, 6, 4,  5 ],
+  [ 1,  5, 1, -4,   1, 8, 7,  4,  -1 ],
+  [ 1, 10, 8,  4,   5, 6, 3, 12,  11,  9,  2, 7 ],
+  [ 1,  5, 4,  8,  10, 6, 7,  8,  12, 11, 10, 9,  13, 12, 11, 10 ]
+];
+
+
 export class KeysVoice extends ImprovisingVoice {
   melody;
   rhythm;
@@ -24,16 +34,28 @@ export class KeysVoice extends ImprovisingVoice {
 
     this.melody = new Array();
     this.melodyIndex = 0;
+
+    if (this.musicalRole === "Leader") {
+      this.generateMelody();
+    }
   }
 
 
   step(index) {
     this.stepCount++;
 
-    if (this.rhythm[this.stepCount] === 0) return;
+    if (this.rhythm[this.stepCount] === 0) {
+      if (this.musicalRole === "Leader" && this.stepCount === this.rhythm.length - 1) {
+        this.stepCount = -1;
+        this.melodyIndex = 0;
+        this.generateMelody();
+        this.notifyFollowers();
+      }
+      return;
+    }
 
     let midiNoteNumber = this.melody[this.melodyIndex % this.melody.length];
-    if (Math.random() > 0.75) {
+    if (this.musicalRole !== "Leader" && Math.random() > 0.75) {
       midiNoteNumber += Math.random() > 0.5 ? -5 : 7;
     }
     this.melodyIndex++;
@@ -48,8 +70,19 @@ export class KeysVoice extends ImprovisingVoice {
   }
 
 
+  notifyFollowers() {
+    this.followers.forEach(voice => {
+      voice.notify({
+        type: "melody",
+        notes: this.melody,
+        duration: this.rhythm.length
+      });
+    });
+  }
+
+
   notify(data) {
-    if (data.type === "chord" && this.musicalRole === "MimickingListener") {
+    if (data.type === "chord" && this.musicalRole === "Follower") {
       this.accompanyChord(data.notes, data.duration);
     }
   }
@@ -60,5 +93,16 @@ export class KeysVoice extends ImprovisingVoice {
     this.melodyIndex = 0;
     this.rhythm = DURATION_MELODY_RHYTHM_MAP[duration];
     this.melody = notes;
+  }
+
+
+  generateMelody() {
+    const scaleDegrees = MELODY_SET[Math.floor(Math.random() * MELODY_SET.length)];
+    this.melody = scaleDegrees.map(d => this.key.degree(d).midi);
+    this.rhythm = Array.from(new Array(this.melody.length * 2), (_, i) => i % 2 === 0 ? 1 : 0);
+
+    const rhythm = new Array(this.melody.length - 1).fill(1).concat(new Array(this.melody.length).fill(0));
+    shuffle(rhythm);
+    this.rhythm = [1, 0].concat(Array.from(new Array(rhythm.length * 2), (_, i) => i % 2 === 0 ? rhythm[i / 2] : 0));
   }
 }

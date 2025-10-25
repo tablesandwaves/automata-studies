@@ -1,3 +1,4 @@
+import { shuffle } from "tblswvs";
 import { ImprovisingVoice } from "./improvising_voice.js";
 
 
@@ -42,11 +43,13 @@ export class PadVoice extends ImprovisingVoice {
   step(index) {
     this.stepCount++;
 
-    if (this.stepCount > 0 && this.stepCount < this.#currentChordLength) return;
+    if (this.musicalRole === "Leader") {
+      if (this.stepCount > 0 && this.stepCount < this.#currentChordLength) return;
 
-    this.stopCurrentChord();
-    this.generateNewChord();
-    this.notifyFollowers();
+      this.stopCurrentChord();
+      this.generateNewChord();
+      this.notifyFollowers();
+    }
   }
 
 
@@ -83,5 +86,29 @@ export class PadVoice extends ImprovisingVoice {
         duration: this.#currentChordLength
       });
     });
+  }
+
+
+  notify(data) {
+    if (data.type === "melody" && this.musicalRole === "Follower") {
+      this.accompanyMelody(data.notes, data.duration);
+    }
+  }
+
+
+  accompanyMelody(notes, duration) {
+    this.stopCurrentChord();
+
+    this.#currentChordLength = duration;
+
+    this.activeNotes = [...new Set(notes)];
+    shuffle(this.activeNotes);
+
+    this.activeNotes = this.activeNotes.slice(0, 4);
+    this.activeNotes.forEach(midiNoteNumber => this.playNote(midiNoteNumber));
+
+    console.log("this.#currentChordLength", this.#currentChordLength, "randomChord", this.activeNotes.join(" "));
+
+    this.stepCount = 0;
   }
 }

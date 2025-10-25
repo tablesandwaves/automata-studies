@@ -48,13 +48,16 @@ export class ImprovisingSequencer {
 
 
   #loadVoices() {
-    const key = new Key(60, Scale.Minor);
+    const key = new Key(60, Scale.MinPentatonic);
     const midiOut = new MidiOutput("tblswvs.out", true);
 
-    const leader = new PadVoice("Leader", key, midiOut, 1);
-    const follower = new KeysVoice("MimickingListener", key, midiOut, 2);
-    leader.followers.push(follower);
+    // const leader = new PadVoice("Leader", key, midiOut, 1);
+    // const follower = new KeysVoice("Follower", key, midiOut, 2);
 
+    const leader = new KeysVoice("Leader", key, midiOut, 2);
+    const follower = new PadVoice("Follower", key, midiOut, 1);
+
+    leader.followers.push(follower);
     this.voices.push(leader);
     this.voices.push(follower);
   }
