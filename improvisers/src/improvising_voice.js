@@ -1,10 +1,11 @@
 export class ImprovisingVoice {
   stepCount;
 
+  // Current role: Leader or Follower
   musicalRole;
-  key;
-  midiOut;
+
   midiChannel;
+  sequencer;
 
   // The last notes played as MIDI note numbers
   activeNotes;
@@ -13,13 +14,12 @@ export class ImprovisingVoice {
   followers;
 
 
-  constructor(musicalRole, key, midiOut, midiChannel) {
+  constructor(musicalRole, midiChannel, sequencer) {
     this.stepCount = -1;
 
     this.musicalRole = musicalRole;
-    this.key = key;
-    this.midiOut = midiOut;
     this.midiChannel = midiChannel - 1;
+    this.sequencer = sequencer;
 
     this.activeNotes = new Array();
     this.followers = new Array();
@@ -31,17 +31,17 @@ export class ImprovisingVoice {
   }
 
 
-  playNote(midiNoteNumber) {
-    this.midiOut.send("noteon", {
+  playNote(midiNoteNumber, velocityMin = 70) {
+    this.sequencer.midiOut.send("noteon", {
       note: midiNoteNumber,
-      velocity: Math.floor(Math.random() * 30) + 70,
+      velocity: Math.floor(Math.random() * 30) + velocityMin,
       channel: this.midiChannel
     });
   }
 
 
   stopNote(midiNoteNumber) {
-    this.midiOut.send("noteoff", {
+    this.sequencer.midiOut.send("noteoff", {
       note: midiNoteNumber,
       velocity: Math.floor(Math.random() * 30) + 70,
       channel: this.midiChannel

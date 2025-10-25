@@ -29,14 +29,15 @@ export class KeysVoice extends ImprovisingVoice {
   melodyIndex;
 
 
-  constructor(musicalRole, key, midiOut, midiChannel) {
-    super(musicalRole, key, midiOut, midiChannel);
+  constructor(musicalRole, midiChannel, sequencer) {
+    super(musicalRole, midiChannel, sequencer);
 
     this.melody = new Array();
     this.melodyIndex = 0;
 
     if (this.musicalRole === "Leader") {
       this.generateMelody();
+      this.notifyFollowers();
     }
   }
 
@@ -60,7 +61,7 @@ export class KeysVoice extends ImprovisingVoice {
     }
     this.melodyIndex++;
 
-    this.playNote(midiNoteNumber);
+    this.playNote(midiNoteNumber, 40);
     setTimeout(() => this.stopNote(midiNoteNumber), 100);
   }
 
@@ -97,8 +98,14 @@ export class KeysVoice extends ImprovisingVoice {
 
 
   generateMelody() {
+    this.sequencer.leaderCycles++;
+
+    if (this.sequencer.leaderCycles >= 4) {
+      this.sequencer.reloadRoles = true;
+    }
+
     const scaleDegrees = MELODY_SET[Math.floor(Math.random() * MELODY_SET.length)];
-    this.melody = scaleDegrees.map(d => this.key.degree(d).midi);
+    this.melody = scaleDegrees.map(d => this.sequencer.key.degree(d).midi);
     this.rhythm = Array.from(new Array(this.melody.length * 2), (_, i) => i % 2 === 0 ? 1 : 0);
 
     const rhythm = new Array(this.melody.length - 1).fill(1).concat(new Array(this.melody.length).fill(0));

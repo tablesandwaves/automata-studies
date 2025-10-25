@@ -1,4 +1,4 @@
-import { shuffle } from "tblswvs";
+import { noteData, shuffle } from "tblswvs";
 import { ImprovisingVoice } from "./improvising_voice.js";
 
 
@@ -18,8 +18,8 @@ export class PadVoice extends ImprovisingVoice {
   #currentChordLength;
 
 
-  constructor(musicalRole, key, midiOut, midiChannel) {
-    super(musicalRole, key, midiOut, midiChannel);
+  constructor(musicalRole, midiChannel, sequencer) {
+    super(musicalRole, midiChannel, sequencer);
   }
 
 
@@ -65,16 +65,21 @@ export class PadVoice extends ImprovisingVoice {
 
 
   generateNewChord() {
+    this.stepCount = 0;
+    this.sequencer.leaderCycles++;
+
+    if (this.sequencer.leaderCycles >= 8) {
+      this.sequencer.reloadRoles = true;
+    }
+
     this.#currentChordLength = CHORD_STEP_LENGTHS[Math.floor(Math.random() * CHORD_STEP_LENGTHS.length)];
-    const chordRoot = Math.ceil(Math.random() * this.key.scaleNotes.length);
-    const currentChord = this.key.chord(chordRoot, "T");
+    const chordRoot = Math.ceil(Math.random() * this.sequencer.key.scaleNotes.length);
+    const currentChord = this.sequencer.key.chord(chordRoot, "T");
 
     this.activeNotes = currentChord.midi;
     this.activeNotes.forEach(midiNoteNumber => this.playNote(midiNoteNumber));
 
-    console.log("this.#currentChordLength", this.#currentChordLength, "chordRoot", chordRoot, "currentChord", currentChord);
-
-    this.stepCount = 0;
+    console.log("Duration", this.#currentChordLength, "Chord:", currentChord.root + " " + currentChord.degree);
   }
 
 
@@ -107,7 +112,12 @@ export class PadVoice extends ImprovisingVoice {
     this.activeNotes = this.activeNotes.slice(0, 4);
     this.activeNotes.forEach(midiNoteNumber => this.playNote(midiNoteNumber));
 
-    console.log("this.#currentChordLength", this.#currentChordLength, "randomChord", this.activeNotes.join(" "));
+    console.log(
+      "Duration:",
+      this.#currentChordLength,
+      "Accompaniment Chord:",
+      this.activeNotes.map(midiNoteNumber => this.sequencer.key.midi2note(midiNoteNumber)).join(" ")
+    );
 
     this.stepCount = 0;
   }

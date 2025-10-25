@@ -7,17 +7,29 @@ import { KeysVoice } from "./src/keys_voice.js";
 
 export class ImprovisingSequencer {
   #transport;
+  key;
+  midiOut;
   voices;
+
+  // Track the number of generative iterations this voice has been in the leadership role
+  leaderCycles;
+  reloadRoles;
 
 
   constructor() {
+    this.key = new Key(60, Scale.Minor);
+    this.midiOut = new MidiOutput("tblswvs.out", true);
+
+    this.leaderCycles = 0;
+    this.reloadRoles = false;
+
     // Clock Step From Live
     this.#transport = new LiveStepFollower();
     this.#transport.on("step", index => this.step(index));
     this.#transport.on("transport", state => this.startStop(state))
 
     this.voices = new Array();
-    this.#loadVoices();
+    this.loadVoices();
   }
 
 
@@ -33,6 +45,13 @@ export class ImprovisingSequencer {
 
 
   step(index) {
+    if (index === 15 && this.reloadRoles) {
+      this.voices.forEach(voice => voice.stopActiveNotes());
+      this.loadVoices();
+      this.reloadRoles = false;
+      this.leaderCycles = 0;
+    }
+
     // First notify the leaders so they can update their followers with data
     this.voices.forEach(voice => {
       if (voice.musicalRole === "Leader")
@@ -47,18 +66,18 @@ export class ImprovisingSequencer {
   }
 
 
-  #loadVoices() {
-    const key = new Key(60, Scale.MinPentatonic);
-    const midiOut = new MidiOutput("tblswvs.out", true);
+  loadVoices() {
+    const [keysRole, padRole] = Math.random() > 0.5 ? ["Leader", "Follower"] : ["Follower", "Leader"];
+    const keys = new KeysVoice(keysRole, 2, this);
+    const pad  = new PadVoice(padRole, 1, this);
 
-    // const leader = new PadVoice("Leader", key, midiOut, 1);
-    // const follower = new KeysVoice("Follower", key, midiOut, 2);
+    if (keys.musicalRole === "Leader") {
+      keys.followers.push(pad);
+    } else {
+      pad.followers.push(keys);
+    }
 
-    const leader = new KeysVoice("Leader", key, midiOut, 2);
-    const follower = new PadVoice("Follower", key, midiOut, 1);
-
-    leader.followers.push(follower);
-    this.voices.push(leader);
-    this.voices.push(follower);
+    this.voices = [keys, pad];
+    console.log(`Leader: ${keysRole === "Leader" ? "Keys" : "Pad"}`);
   }
 }
