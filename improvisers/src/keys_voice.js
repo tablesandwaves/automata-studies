@@ -45,24 +45,31 @@ export class KeysVoice extends ImprovisingVoice {
   step(index) {
     this.stepCount++;
 
-    if (this.rhythm[this.stepCount] === 0) {
-      if (this.musicalRole === "Leader" && this.stepCount === this.rhythm.length - 1) {
-        this.stepCount = -1;
-        this.melodyIndex = 0;
-        this.generateMelody();
-        this.notifyFollowers();
-      }
-      return;
+    // Check if it is time to generate a new melody.
+    if (this.musicalRole === "Leader" && this.stepCount === this.rhythm.length - 1) {
+      this.stepCount = -1;
+      this.melodyIndex = 0;
+      this.generateMelody();
+      this.notifyFollowers();
     }
 
+    // If the current step corresponds to an off-gate in the rhythm, do nothing.
+    if (this.rhythm[this.stepCount] === 0) return;
+
+    // Otherwise, play the next note...
+
+    // Pull the next MIDI note number from the melody.
     let midiNoteNumber = this.melody[this.melodyIndex % this.melody.length];
+
+    // Randomize the note up or down sometimes.
     if (this.musicalRole !== "Leader" && Math.random() > 0.75) {
       midiNoteNumber += Math.random() > 0.5 ? -5 : 7;
     }
+
     this.melodyIndex++;
 
     this.playNote(midiNoteNumber, 40);
-    setTimeout(() => this.stopNote(midiNoteNumber), 100);
+    setTimeout(() => this.stopNote(midiNoteNumber), Math.random() < 50 ? 250 : 500);
   }
 
 
@@ -97,6 +104,17 @@ export class KeysVoice extends ImprovisingVoice {
   }
 
 
+  /**
+   * Generate a new melody for this voice by updating its MIDI note sequence and gate rhythm properties.
+   *
+   * First, increment the sequencer leader cycle count. If the leader cycle count is greater
+   * than four, set the sequencer's reload roles property to true.
+   *
+   * Next, generate a melody:
+   *
+   * 1. Choose a melody from the melody set and translate the scale degrees to MIDI note numbers.
+   * 2. Generate a randomized rhythm based on the melody's length
+   */
   generateMelody() {
     this.sequencer.leaderCycles++;
 
@@ -106,10 +124,17 @@ export class KeysVoice extends ImprovisingVoice {
 
     const scaleDegrees = MELODY_SET[Math.floor(Math.random() * MELODY_SET.length)];
     this.melody = scaleDegrees.map(d => this.sequencer.key.degree(d).midi);
-    this.rhythm = Array.from(new Array(this.melody.length * 2), (_, i) => i % 2 === 0 ? 1 : 0);
 
+    // Create a temporary gate array that is two steps shorter than the melody length doubled.
+    // Fill it with zeros equal to the number of melodic notes and ones equal to one less than this amount.
     const rhythm = new Array(this.melody.length - 1).fill(1).concat(new Array(this.melody.length).fill(0));
+
+    // Shuffle this gate array to create a randomized rhythm gate array
     shuffle(rhythm);
+
+    // Finally, half time the temporary rhythm, which will ensure the gates only occur on 8th notes, and
+    // prefix the rhythm with an on-gate/off-gate combo to ensure the melody always begins on the first
+    // downbeat.
     this.rhythm = [1, 0].concat(Array.from(new Array(rhythm.length * 2), (_, i) => i % 2 === 0 ? rhythm[i / 2] : 0));
   }
 }
