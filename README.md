@@ -38,6 +38,14 @@ $ node main.js guessing-game
 
 ## Automata Experiments
 
+### Improvisers
+
+**Added:** November 26, 2025
+
+This group of automata implement rudimentary harmonic/melodic accompaniment. There are two voices, each with a different musical role, a melodic keys voice and a pad voice that plays chords. The voices take turns acting as a lead voice. When the keys voice is the leader, it plays a randomly selected melody and the pad voice provides harmonic accompaniment by playing a random chord using from the melody's notes. Conversely, when the pad voice is acting as the leader, it selects a random chord and the keys voice provides accompaniment in the form of arpeggiation of the current chord notes.
+
+This experiment is an exercise in message notification among multiple independent voice objects. As noted above, each voice has a musical role (melody generation or chord generation) but will also take turns in leader and follower roles. The behaviors for each voice changes depending on these latter roles. The voice in the leader role will send notification messages to the follower and also a sequencer object that coordinates the leader/follower role assignments.
+
 ### Phasing Voices
 
 **Added:** September 14, 2025

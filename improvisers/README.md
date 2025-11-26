@@ -112,4 +112,4 @@ The keys voice will play a melodic line four times, each time notifying its pare
 
 In this example, the keys voice was selected for the first two leader cycles and then the pad voice was selected for the next two cycles and the fifth cycle went back to the keys voice.
 
-When the pad voice is acting as the leader, it selects a random chord and duration (measured in 16th notes). It then notifies the keys voice of what chord and duration were selected and the keys voice will provide chord arpegiation as accompaniment.
+When the pad voice is acting as the leader, it selects a random chord and duration (measured in 16th notes). It then notifies the keys voice of what chord and duration were selected and the keys voice will provide chord arpeggiation as accompaniment.
