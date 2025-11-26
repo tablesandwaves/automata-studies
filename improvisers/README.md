@@ -108,7 +108,7 @@ In this example, the program randomly chose to begin by setting the keys (melody
 
 When it starts a new melodic cycle, it also notifies the pad (chords) voice for generating an accompanying chord. The chord is randomly constructed from the melodic notes passed from the keys voice. The accompaniment chord and its duration are displayed with the melody.
 
-The keys voice will play a melodic line four times, each time notifying its parent sequencer when a new cycle has begun. When four cycles have completed, the sequencer chooses a new leader voice for the next round. A voice may repeat its role for up to three leaders cycles. If the same voice has been randomly selected three times in a row, the leader/follower roles will be swapped.
+The keys voice will play a melodic line four times, each time notifying its parent sequencer when a new cycle has begun. When four cycles have completed, the sequencer chooses a new leader voice for the next round. A voice may repeat its role for up to three leader cycles. If the same voice has been randomly selected three times in a row, the leader/follower roles will be swapped.
 
 In this example, the keys voice was selected for the first two leader cycles and then the pad voice was selected for the next two cycles and the fifth cycle went back to the keys voice.
 
