@@ -1,4 +1,4 @@
-import { shuffle } from "tblswvs";
+import { shuffle, noteData } from "tblswvs";
 import { ImprovisingVoice } from "./improvising_voice.js";
 
 
@@ -37,20 +37,29 @@ export class KeysVoice extends ImprovisingVoice {
 
     if (this.musicalRole === "Leader") {
       this.generateMelody();
-      this.notifyFollowers();
     }
   }
 
 
   step(index) {
+    if (this.sequencer.reloadRoles) return;
+
     this.stepCount++;
+
+    // If this is the first note of a melody, tell the accompaniment chord to follow.
+    if (this.musicalRole === "Leader" && this.stepCount === 0) {
+      this.notifyFollowers();
+    }
 
     // Check if it is time to generate a new melody.
     if (this.musicalRole === "Leader" && this.stepCount === this.rhythm.length - 1) {
-      this.stepCount = -1;
-      this.melodyIndex = 0;
-      this.generateMelody();
-      this.notifyFollowers();
+      if (this.sequencer.leaderCycles >= 4) {
+        this.sequencer.reloadRoles = true;
+      } else {
+        this.stepCount = -1;
+        this.melodyIndex = 0;
+        this.generateMelody();
+      }
     }
 
     // If the current step corresponds to an off-gate in the rhythm, do nothing.
@@ -118,10 +127,6 @@ export class KeysVoice extends ImprovisingVoice {
   generateMelody() {
     this.sequencer.leaderCycles++;
 
-    if (this.sequencer.leaderCycles >= 4) {
-      this.sequencer.reloadRoles = true;
-    }
-
     const scaleDegrees = MELODY_SET[Math.floor(Math.random() * MELODY_SET.length)];
     this.melody = scaleDegrees.map(d => this.sequencer.key.degree(d).midi);
 
@@ -136,5 +141,13 @@ export class KeysVoice extends ImprovisingVoice {
     // prefix the rhythm with an on-gate/off-gate combo to ensure the melody always begins on the first
     // downbeat.
     this.rhythm = [1, 0].concat(Array.from(new Array(rhythm.length * 2), (_, i) => i % 2 === 0 ? rhythm[i / 2] : 0));
+
+    console.log(
+      scaleDegrees.map(d => {
+        const note = this.sequencer.key.degree(d);
+        return `${note.note}${note.octave}`;
+      }).join(" ")
+    );
+    console.log(this.rhythm.map(g => g ? "*" : "_").join(""))
   }
 }

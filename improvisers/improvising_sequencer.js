@@ -12,12 +12,16 @@ export class ImprovisingSequencer {
   voices;
 
   // Track the number of generative iterations this voice has been in the leadership role
+  // The pad and keys voices each choose the number of iterations will play for a leader
+  // cycle. The consecutive leader count tracking will make sure no leader role is used
+  // more than three times in a row.
   leaderCycles;
   reloadRoles;
+  consecutiveLeaderCount = { voice: undefined, iterations: 0 };
 
 
   constructor() {
-    this.key = new Key(60, Scale.Minor);
+    this.key = new Key(60, Scale.MinPentatonic);
     this.midiOut = new MidiOutput("tblswvs.out", true);
 
     this.leaderCycles = 0;
@@ -34,8 +38,6 @@ export class ImprovisingSequencer {
 
 
   startStop(state) {
-    console.log(`Transport: ${state}`);
-
     if (state === "stopped") {
       this.voices.forEach(voice => {
         voice.stop();
@@ -47,9 +49,9 @@ export class ImprovisingSequencer {
   step(index) {
     if (index === 15 && this.reloadRoles) {
       this.voices.forEach(voice => voice.stopActiveNotes());
-      this.loadVoices();
       this.reloadRoles = false;
       this.leaderCycles = 0;
+      this.loadVoices();
     }
 
     // First notify the leaders so they can update their followers with data
@@ -67,7 +69,8 @@ export class ImprovisingSequencer {
 
 
   loadVoices() {
-    const [keysRole, padRole] = Math.random() > 0.5 ? ["Leader", "Follower"] : ["Follower", "Leader"];
+    const [keysRole, padRole] = this.getKeysAndPadRoles();
+
     const keys = new KeysVoice(keysRole, 2, this);
     const pad  = new PadVoice(padRole, 1, this);
 
@@ -78,6 +81,54 @@ export class ImprovisingSequencer {
     }
 
     this.voices = [keys, pad];
-    console.log(`Leader: ${keysRole === "Leader" ? "Keys" : "Pad"}`);
+  }
+
+
+  getKeysAndPadRoles() {
+    const [keysRole, padRole] = (this.consecutiveLeaderCount.iterations == 3) ?
+                                this.swapRoles() :
+                                this.selectRandomRoles();
+
+    console.log(`\nLeader: ${keysRole === "Leader" ? "Keys" : "Pad"} (${this.consecutiveLeaderCount.iterations})\n`);
+
+    return [keysRole, padRole];
+  }
+
+
+  swapRoles() {
+    let keysRole, padRole;
+
+    if (this.consecutiveLeaderCount.voice == "Pad") {
+      keysRole = "Leader";
+      padRole  = "Follower";
+      this.consecutiveLeaderCount.voice = "Keys";
+    } else {
+      keysRole = "Follower";
+      padRole  = "Leader";
+      this.consecutiveLeaderCount.voice = "Pad";
+    }
+    this.consecutiveLeaderCount.iterations = 1;
+
+    return [keysRole, padRole];
+  }
+
+
+  selectRandomRoles() {
+    const [keysRole, padRole] = Math.random() > 0.5 ? ["Leader", "Follower"] : ["Follower", "Leader"];
+
+    // Which voice has been selected as the next leader.
+    // If it was the leader in the previous round, increment the iteration count.
+    // Otherwise, reset the iteration count to start over at 1.
+    if (keysRole == "Leader") {
+      this.consecutiveLeaderCount = this.consecutiveLeaderCount.voice === "Keys" ?
+                                    { voice: "Keys", iterations: this.consecutiveLeaderCount.iterations + 1 } :
+                                    { voice: "Keys", iterations: 1 };
+    } else {
+      this.consecutiveLeaderCount = this.consecutiveLeaderCount.voice === "Pad" ?
+                                    { voice: "Pad", iterations: this.consecutiveLeaderCount.iterations + 1 } :
+                                    { voice: "Pad", iterations: 1 };
+    }
+
+    return [keysRole, padRole];
   }
 }

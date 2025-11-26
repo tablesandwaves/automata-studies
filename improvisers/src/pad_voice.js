@@ -109,14 +109,14 @@ export class PadVoice extends ImprovisingVoice {
     this.activeNotes = [...new Set(notes)];
     shuffle(this.activeNotes);
 
-    this.activeNotes = this.activeNotes.slice(0, 4);
-    this.activeNotes.forEach(midiNoteNumber => this.playNote(midiNoteNumber));
+    this.activeNotes.slice(0, 4).forEach(midiNoteNumber => this.playNote(midiNoteNumber));
 
     console.log(
       "Duration:",
       this.#currentChordLength,
       "Accompaniment Chord:",
-      this.activeNotes.map(midiNoteNumber => this.sequencer.key.midi2note(midiNoteNumber)).join(" ")
+      this.activeNotes.slice(0, 4).map(midiNoteNumber => this.sequencer.key.midi2note(midiNoteNumber)).join(" "),
+      "\n"
     );
 
     this.stepCount = 0;
